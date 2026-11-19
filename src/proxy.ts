@@ -1,78 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = "http://127.0.0.1:8000";
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  const isAdmin = pathname === "/admin" ||
+  const admin = pathname === "/admin" ||
     pathname.startsWith("/admin/");
 
-  const isAirlineDashboard =
-    pathname === "/airline/dashboard" ||
-    pathname.startsWith("/airline/dashboard/");
+  const airline = pathname === "/airline" ||
+    pathname.startsWith("/airline/");
 
-  if (!isAdmin && !isAirlineDashboard) {
+  const operations = pathname === "/operations" ||
+    pathname.startsWith("/operations/");
+
+  if (!admin && !airline && !operations) {
     return NextResponse.next();
   }
 
-  // Login and registration pages must remain public.
-  if (
-    pathname === "/admin/login" ||
-    pathname === "/airline/login" ||
-    pathname === "/airline/register"
-  ) {
+  const publicPages = new Set([
+    "/admin/login",
+    "/admin/register",
+    "/airline/login",
+    "/airline/register",
+  ]);
+
+  if (publicPages.has(pathname)) {
     return NextResponse.next();
   }
 
-  const loginPath = isAdmin
-    ? "/admin/login"
-    : "/airline/login";
+  const login = admin ? "/admin/login" : "/airline/login";
 
-  const redirectToLogin = () =>
-    NextResponse.redirect(new URL(loginPath, request.url));
+  const deny = () =>
+    NextResponse.redirect(new URL(login, request.url));
 
-  const cookie = request.cookies.get("flightguard_session");
+  const token = request.cookies.get("flightguard_session")?.value;
 
-  if (!cookie?.value) {
-    return redirectToLogin();
-  }
+  if (!token) return deny();
+
+  const headers = {
+    Cookie: `flightguard_session=${token}`,
+  };
 
   try {
-    const endpoint = isAdmin
-      ? "/api/auth/me"
-      : "/api/airline/workspace";
-
-    const response = await fetch(`${BACKEND}${endpoint}`, {
-      method: "GET",
-      headers: {
-        Cookie: `flightguard_session=${cookie.value}`,
-      },
+    const response = await fetch(`${BACKEND}/api/auth/me`, {
+      headers,
       cache: "no-store",
       signal: AbortSignal.timeout(5000),
     });
 
-    if (!response.ok) {
-      return redirectToLogin();
-    }
+    if (!response.ok) return deny();
 
-    if (isAdmin) {
-      const user = await response.json();
+    const user = await response.json();
 
-      if (!user.is_platform_admin) {
-        return redirectToLogin();
-      }
+    if (admin && !user.is_platform_admin) return deny();
+
+    if (airline || (operations && !user.is_platform_admin)) {
+      if (user.is_platform_admin) return deny();
+
+      const workspace = await fetch(
+        `${BACKEND}/api/airline/workspace`,
+        {
+          headers,
+          cache: "no-store",
+          signal: AbortSignal.timeout(5000),
+        }
+      );
+
+      if (!workspace.ok) return deny();
     }
 
     return NextResponse.next();
   } catch {
-    return redirectToLogin();
+    return deny();
   }
 }
 
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/airline/dashboard/:path*",
+    "/airline/:path*",
+    "/operations/:path*",
   ],
 };

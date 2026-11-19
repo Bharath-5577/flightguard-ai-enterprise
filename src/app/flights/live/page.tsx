@@ -208,6 +208,8 @@ export default function LiveAircraftTracker() {
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
 
+    maplibregl.setWorkerUrl("/maplibre-gl-worker.js");
+
     const map = new maplibregl.Map({
       container: mapContainer.current,
       style: MAP_STYLE,

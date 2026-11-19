@@ -73,3 +73,17 @@ __pycache__/
 # Python cache and environments
 .pytest_cache/
 .venv-ml/
+
+# Publish small research evaluation tables, not raw datasets
+!research_2025/results/
+!research_2025/results/*.csv
+
+# FlightGuard AI GitHub publishing exclusions
+
+# Raw BTS archives are retained locally
+/research_2025/data/raw/bts/*.zip
+
+# Historical source-code backups
+/backend/main_before_qwen25.py
+/backend/main_before_research_2025_router.py
+/backend/research_2025_delay_routes_before_auth.py

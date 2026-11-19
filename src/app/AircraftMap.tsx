@@ -23,6 +23,8 @@ export default function AircraftMap({ aircraft }: { aircraft: Aircraft[] }) {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    maplibregl.setWorkerUrl("/maplibre-gl-worker.js");
+
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: {

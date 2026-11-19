@@ -20,15 +20,16 @@ const initial = {
   Origin: "DFW",
   Dest: "ORD",
   Distance: 802,
-  departure_hour: 14,
-  departure_minute: 30,
-  arrival_hour: 17,
-  day_of_week: 0,
-  day_of_month: 28,
-  month: 12,
-  TMP: 5,
-  WND: 8,
-  VIS: 10000,
+  CRSElapsedTime: 145,
+  ScheduledHour: 14,
+  Month: 6,
+  DayOfWeek: 0,
+  tmpf: 80,
+  dwpf: 65,
+  sknt: 8,
+  vsby: 10,
+  mslp: 1013,
+  p01i: 0,
 };
 
 const fields: { key: keyof typeof initial; label: string }[] = [
@@ -36,15 +37,16 @@ const fields: { key: keyof typeof initial; label: string }[] = [
   { key: "Origin", label: "Origin Airport" },
   { key: "Dest", label: "Destination Airport" },
   { key: "Distance", label: "Distance (miles)" },
-  { key: "departure_hour", label: "Departure Hour (0–23)" },
-  { key: "departure_minute", label: "Departure Minute (0–59)" },
-  { key: "arrival_hour", label: "Arrival Hour (0–23)" },
-  { key: "day_of_week", label: "Day of Week (0=Monday)" },
-  { key: "day_of_month", label: "Day of Month" },
-  { key: "month", label: "Month" },
-  { key: "TMP", label: "Temperature (model input)" },
-  { key: "WND", label: "Wind (model input)" },
-  { key: "VIS", label: "Visibility (model input)" },
+  { key: "CRSElapsedTime", label: "Scheduled Flight Duration (minutes)" },
+  { key: "ScheduledHour", label: "Scheduled Departure Hour (0–23)" },
+  { key: "Month", label: "Month (1–12)" },
+  { key: "DayOfWeek", label: "Day of Week (0=Monday)" },
+  { key: "tmpf", label: "Temperature (°F)" },
+  { key: "dwpf", label: "Dew Point (°F)" },
+  { key: "sknt", label: "Wind Speed (knots)" },
+  { key: "vsby", label: "Visibility (miles)" },
+  { key: "mslp", label: "Sea-Level Pressure (hPa)" },
+  { key: "p01i", label: "Hourly Precipitation (inches)" },
 ];
 
 export default function CancellationPredictionPage() {
@@ -119,8 +121,8 @@ export default function CancellationPredictionPage() {
             Flight Cancellation Risk
           </h1>
           <p className="mt-3 max-w-3xl text-slate-300">
-            Explore a historical 2015 CatBoost cancellation model using
-            flight schedule and weather features.
+            Explore the 2025 Histogram Gradient Boosting cancellation model using
+            historical flight schedules and NOAA weather features.
           </p>
         </div>
 

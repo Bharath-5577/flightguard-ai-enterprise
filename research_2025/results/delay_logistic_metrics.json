@@ -1,0 +1,12 @@
+{
+  "task": "delay",
+  "model": "SGD logistic regression",
+  "train_rows": 300000,
+  "validation_rows": 150000,
+  "roc_auc": 0.6630799065978382,
+  "pr_auc": 0.30747635794848904,
+  "threshold": 0.5727763501645328,
+  "precision": 0.2743489906939497,
+  "recall": 0.6796182918904128,
+  "f1": 0.390899343910764
+}

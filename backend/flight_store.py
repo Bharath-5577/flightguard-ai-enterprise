@@ -15,7 +15,7 @@ CSV_FILE = (
     / "operational_risk_flights_2015_full_year_weather_enriched.csv"
 )
 
-DB_FILE = PROJECT_ROOT / "data" / "flights.sqlite3"
+DB_FILE = PROJECT_ROOT / "data" / "flights_2025.sqlite3"
 
 
 @contextmanager
@@ -64,6 +64,12 @@ def create_database():
 
 
 def import_csv():
+    raise RuntimeError(
+        "Legacy 2015 CSV import is disabled. "
+        "The 2025 database is already populated from original BTS files."
+    )
+
+    # Legacy implementation retained below for reference.
     if not CSV_FILE.is_file():
         raise FileNotFoundError(f"CSV not found: {CSV_FILE}")
 

@@ -8,7 +8,6 @@ All numeric facts and visualization rows come from the local CSV, not the model.
 
 from __future__ import annotations
 from backend.tenant_flight_routes import router as tenant_flight_router
-from backend.airline_routes import router as airline_router
 from backend.flight_store import (
     get_summary,
     get_grouped_analytics,
@@ -185,7 +184,7 @@ def health():
     ollama_base = os.getenv(
         "OLLAMA_URL", "http://127.0.0.1:11434"
     ).rstrip("/")
-    model = os.getenv("OLLAMA_MODEL", "qwen3:4b")
+    model = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 
     connected = False
     model_available = False
@@ -354,7 +353,7 @@ def select_visualization(question: str, data: dict) -> tuple[dict, str]:
 
                 + (f"Next were {runners}. " if runners else "")
 
-                + "These are unadjusted rates from full-year 2015, not current performance."
+                + "These are unadjusted rates from full-year 2025, not current performance."
 
             )
 
@@ -414,7 +413,7 @@ def evidence_for(question: str, data: dict, viz: dict) -> str:
 
     m = metric(data["total_flights"], data["delayed_total"])
 
-    evidence = ["BTS network historical dataset: full-year 2015.",
+    evidence = ["BTS network historical dataset: full-year 2025.",
 
                 f"Overall totals: {m}.", f"Selected visualization: {viz['type']}.",
 
@@ -514,6 +513,21 @@ def clean_model_answer(raw: str) -> str:
 
     return raw
 
+
+def ollama_model():
+    """Return the configured local Ollama model."""
+    return os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
+
+
+
+def ollama_url():
+    """Return the configured local Ollama server URL."""
+    return os.getenv(
+        "OLLAMA_URL",
+        "http://127.0.0.1:11434"
+    ).rstrip("/")
+
+
 @app.post("/api/copilot/chat")
 
 def copilot_chat(request: CopilotRequest):
@@ -544,7 +558,7 @@ def copilot_chat(request: CopilotRequest):
 
             "internal monologue, or prompt text. Use only the trusted historical BTS "
 
-            "Full-year 2015 data provided. Do not invent statistics, causes, predictions, "
+            "Full-year 2025 data provided. Do not invent statistics, causes, predictions, "
 
             "current statuses, ROI, or statistical significance. "
 
@@ -710,10 +724,14 @@ app.include_router(admin_setup_router)
 
 from backend.registration_admin import router as registration_admin_router
 app.include_router(registration_admin_router)
+from backend.platform_monitoring import router as platform_monitoring_router
+app.include_router(platform_monitoring_router)
+
 
 # Register airline customer routes after application initialization.
 
 # Register the complete airline customer router.
+from backend.airline_routes import router as airline_router
 app.include_router(airline_router)
 
 # Historical cancellation research API
@@ -722,6 +740,10 @@ app.include_router(cancellation_router)
 
 from backend.delay_routes import router as delay_router
 app.include_router(delay_router)
+
+# Isolated 2025 historical delay research endpoint
+from backend.research_2025_delay_routes import router as research_2025_delay_router
+app.include_router(research_2025_delay_router)
 
 
 app.include_router(tenant_flight_router)

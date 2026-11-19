@@ -157,6 +157,7 @@ export default function AirlineDashboard() {
     async function loadCombinedPerformance() {
       setCombinedLoading(true);
       setCombinedError("");
+      setCombinedPerformance(null);
 
       const params = new URLSearchParams();
       if (selectedAirline) params.set("airline", selectedAirline);
@@ -197,6 +198,7 @@ export default function AirlineDashboard() {
         }
       } catch (error) {
         if (active && !controller.signal.aborted) {
+          setCombinedPerformance(null);
           setCombinedError("Unable to load combined flight performance.");
         }
       } finally {
@@ -355,7 +357,7 @@ export default function AirlineDashboard() {
               Aviation Performance Overview
             </h3>
             <p className="mt-2 text-sm text-slate-300">
-              Historical BTS network data, January–March 2015.
+              Historical BTS network data, January–December 2025.
               These records are not specific to your organization
               and do not represent live operations.
             </p>
@@ -614,7 +616,7 @@ export default function AirlineDashboard() {
                     onChange={(event) =>
                       setSelectedDestination(event.target.value)
                     }
-                    disabled={combinedLoading || availableDestinations.length === 0}
+                    disabled={availableDestinations.length === 0}
                     className="w-full max-w-sm rounded-lg border border-white/20 bg-[#07152f] px-4 py-3 text-white disabled:opacity-60"
                   >
                     <option value="">All destinations</option>
@@ -731,7 +733,7 @@ export default function AirlineDashboard() {
                   Historical Delay Rate Trend
                 </h4>
                 <p className="mt-2 text-sm text-slate-300">
-                  Daily percentage of delayed flights · January–March 2015
+                  Daily percentage of delayed flights · January–December 2025
                 </p>
 
                 {analytics.daily.length > 1 ? (
@@ -739,7 +741,7 @@ export default function AirlineDashboard() {
                     <svg
                       viewBox="0 0 900 260"
                       role="img"
-                      aria-label="Daily historical flight delay rates from January through March 2015"
+                      aria-label="Daily historical flight delay rates from January through December 2025"
                       className="h-auto w-full"
                     >
                       {[0, 10, 20, 30, 40, 50].map((tick) => (
@@ -787,10 +789,13 @@ export default function AirlineDashboard() {
                       />
 
                       {[
-                        { date: "2015-01-01", label: "Jan 1" },
-                        { date: "2015-02-01", label: "Feb 1" },
-                        { date: "2015-03-01", label: "Mar 1" },
-                      ].map((month) => {
+                        "Jan", "Feb", "Mar", "Apr",
+                        "May", "Jun", "Jul", "Aug",
+                        "Sep", "Oct", "Nov", "Dec",
+                      ].map((label, index) => ({
+                        date: `2025-${String(index + 1).padStart(2, "0")}-01`,
+                        label,
+                      })).map((month) => {
                         const index = analytics.daily.findIndex(
                           (day) => day.date >= month.date
                         );

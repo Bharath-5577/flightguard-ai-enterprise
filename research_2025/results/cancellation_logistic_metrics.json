@@ -1,0 +1,12 @@
+{
+  "task": "cancellation",
+  "model": "SGD logistic regression",
+  "train_rows": 300000,
+  "validation_rows": 150000,
+  "roc_auc": 0.7196426381472296,
+  "pr_auc": 0.022404579807132483,
+  "threshold": 0.8468534486182852,
+  "precision": 0.05109170305676856,
+  "recall": 0.14444444444444443,
+  "f1": 0.07548387096774194
+}

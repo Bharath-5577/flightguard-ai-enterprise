@@ -1,3 +1,4 @@
+import FlightGuardNavigation from "./FlightGuardNavigation";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -30,6 +31,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="min-h-screen flex flex-col">
+        <FlightGuardNavigation />
         {children}
       </body>
     </html>

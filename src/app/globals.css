@@ -463,3 +463,24 @@ img {
     font-size: 26px;
   }
 }
+
+/* FlightGuard AI — administrator portal theme */
+
+body:has(.fg-admin-page) {
+  background: #071326;
+  color: #f8fafc;
+}
+
+.fg-admin-page {
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  background: #071326;
+  color: #f8fafc;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.fg-admin-page h1,
+.fg-admin-page h2 {
+  color: #f8fafc;
+}

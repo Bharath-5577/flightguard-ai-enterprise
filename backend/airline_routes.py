@@ -72,7 +72,6 @@ def historical_analytics(
 
 
 @router.get("/filtered-performance")
-@router.get("/filtered-performance")
 def filtered_performance(
     airline: str = Query("", max_length=3, pattern=r"^[A-Za-z0-9]*$"),
     origin: str = Query("", max_length=3, pattern=r"^[A-Za-z]*$"),

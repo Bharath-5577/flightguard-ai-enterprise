@@ -3,7 +3,7 @@
 import json
 import sys
 
-from backend.cancellation_inference import predict_cancellation_risk
+from backend.cancellation_inference_2025 import predict_cancellation_risk_2025
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
         if not isinstance(request, dict) or set(request) != {"features"}:
             raise ValueError("Request must contain exactly the features field")
 
-        result = predict_cancellation_risk(request["features"])
+        result = predict_cancellation_risk_2025(request["features"])
 
         print(json.dumps({
             "status": "success",
