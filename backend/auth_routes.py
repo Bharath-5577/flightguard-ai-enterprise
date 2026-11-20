@@ -14,12 +14,21 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 COOKIE_NAME = "flightguard_session"
 SESSION_DAYS = 7
-COOKIE_SECURE = os.getenv("FLIGHTGUARD_COOKIE_SECURE", "false").lower() == "true"
+PRODUCTION_ORIGIN = os.getenv("FLIGHTGUARD_FRONTEND_ORIGIN", "").strip().rstrip("/")
+COOKIE_SECURE = (
+    os.getenv("FLIGHTGUARD_COOKIE_SECURE", "false").lower() == "true"
+    or bool(PRODUCTION_ORIGIN)
+)
 
 ALLOWED_ORIGINS = {
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 }
+PRODUCTION_ORIGIN = os.getenv("FLIGHTGUARD_FRONTEND_ORIGIN", "").strip().rstrip("/")
+if PRODUCTION_ORIGIN:
+    if not PRODUCTION_ORIGIN.startswith("https://"):
+        raise RuntimeError("Production frontend origin must use HTTPS.")
+    ALLOWED_ORIGINS.add(PRODUCTION_ORIGIN)
 
 
 class LoginRequest(BaseModel):
@@ -188,5 +197,11 @@ def logout(
                 (hash_token(flightguard_session),),
             )
 
-    response.delete_cookie(COOKIE_NAME, path="/")
+    response.delete_cookie(
+        COOKIE_NAME,
+        path="/",
+        secure=COOKIE_SECURE,
+        httponly=True,
+        samesite="lax",
+    )
     return {"status": "success"}

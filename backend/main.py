@@ -47,13 +47,15 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger("flightguard")
 
+from backend.auth_routes import ALLOWED_ORIGINS
+
 app = FastAPI(title="FlightGuard AI Enterprise API", description="Historical aviation operations intelligence", version="4.3.0")
 
 app.add_middleware(
 
     CORSMiddleware,
 
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=sorted(ALLOWED_ORIGINS),
 
     # Local-network access is for development only. Restrict origins before deployment.
 

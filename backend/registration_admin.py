@@ -7,7 +7,7 @@ from fastapi import APIRouter, Cookie, HTTPException, Request
 from pydantic import BaseModel
 
 from backend.auth import connect_db
-from backend.auth_routes import get_session_user
+from backend.auth_routes import ALLOWED_ORIGINS, get_session_user
 
 router = APIRouter(
     prefix="/api/admin/registrations",
@@ -22,11 +22,17 @@ LOCAL_ORIGINS = {
 
 
 def require_admin(request: Request, token: str | None):
-    if request.client is None or request.client.host not in LOCAL_HOSTS:
-        raise HTTPException(403, "Local access only.")
+    origin = request.headers.get("origin")
 
-    if request.headers.get("origin") not in LOCAL_ORIGINS:
+    if origin not in ALLOWED_ORIGINS:
         raise HTTPException(403, "Invalid origin.")
+
+    if origin in LOCAL_ORIGINS:
+        if request.client is None or request.client.host not in LOCAL_HOSTS:
+            raise HTTPException(403, "Local access only.")
+    else:
+        if request.url.scheme != "https":
+            raise HTTPException(403, "HTTPS required.")
 
     user = get_session_user(token)
 
