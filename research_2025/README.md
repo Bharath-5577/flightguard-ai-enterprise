@@ -106,20 +106,74 @@ These are validation results, not final-test ablation results.
 - Historical weather matching covers approximately 59% of processed flight records.
 - Cancellation prediction exhibits low final-test recall.
 - Cancellation precision varies considerably between November and December.
-- Saved training pipelines and evaluation reports exist, but the original model-training and evaluation scripts have not been located.
-- The current reports do not establish the cause of temporal performance changes.
+- Historical weather coverage limits the evaluated population to weather-matched flights and may introduce selection bias.
+- Cancellation ROC-AUC decreases from 0.7672 on validation to 0.6177 on final testing.
+- Cancellation final-test recall is 0.0887, meaning approximately 91.13% of cancellations are missed at the evaluated threshold.
+- Cancellation precision varies considerably between November and December.
+- The original model-training script remains unavailable; a reconstructed training procedure reproduces the saved models' validation predictions.
+- The available experiments do not establish the cause of temporal performance changes.
+- Weather ablation results are validation-only and do not establish final-test improvement.
 
 ## Reproducibility
 
-Available source scripts:
-- prepare_data.py
-- join_weather.py
+### Available source scripts
 
-Available artifacts:
-- Saved scikit-learn model pipelines
-- Validation metrics
-- Final-test metrics
-- Weather ablation reports
+- `prepare_data.py`: prepares monthly BTS flight records and chronological splits.
+- `join_weather.py`: performs historical origin-airport weather matching.
+- `train_reproducible.py`: reconstructs training for four saved model configurations.
+- `evaluate_models.py`: reproduces the selected models' final-test metrics.
+
+### Reconstructed training procedure
+
+For each prediction task, the reconstructed training experiment:
+
+1. Loads weather-matched training records from January through August 2025.
+2. Selects 300,000 records without replacement using `random_state=42`.
+3. Clones the corresponding saved scikit-learn pipeline configuration.
+4. Fits the cloned pipeline on the selected training records.
+5. Evaluates predicted probabilities on all weather-matched September–October validation records.
+6. Saves the reconstructed model locally and writes its validation metrics to JSON.
+
+The original training sample-selection procedure was not documented. The reconstructed procedure is therefore reported separately rather than presented as the recovered original script.
+
+### Prediction-level verification
+
+The reconstructed models were compared against the original saved models across their complete weather-matched validation datasets.
+
+| Task | Model | Validation predictions compared | Maximum absolute difference |
+|---|---|---:|---:|
+| Delay | Logistic Regression | 689,823 | 0 |
+| Delay | Histogram Gradient Boosting | 689,823 | 0 |
+| Cancellation | Logistic Regression | 695,115 | 0 |
+| Cancellation | Histogram Gradient Boosting | 695,115 | 0 |
+
+All four comparisons passed, totaling 2,769,876 probability predictions.
+
+These results establish prediction-level agreement on the evaluated validation datasets. They do not independently establish the original development history or guarantee reproducibility across different software environments.
+
+### Final-test evaluation
+
+`evaluate_models.py` reproduces the saved final-test metrics for the selected histogram gradient-boosting models on November–December 2025 weather-matched records.
+
+### Constant-score reference baseline
+
+The final-test comparison includes a constant-score reference whose ROC-AUC is 0.5 and whose PR-AUC equals the test-set positive prevalence.
+
+| Task | Baseline PR-AUC | Selected model PR-AUC |
+|---|---:|---:|
+| Delay | 0.2467 | 0.3882 |
+| Cancellation | 0.0205 | 0.0535 |
+
+This reference uses test-set prevalence and is not a separately fitted training-data baseline.
+
+### Research artifacts
+
+- Original saved scikit-learn pipelines
+- Four reconstructed training metrics JSON files
+- Full-validation model comparison
+- Final-test metrics and confusion matrices
+- Controlled weather ablation reports
 - Monthly cancellation diagnostics
+- Constant-score baseline comparison
 
-Full training and evaluation reproducibility requires restoring or reconstructing the missing experiment scripts.
+Reconstructed `.joblib` models are generated locally and excluded from Git tracking.
