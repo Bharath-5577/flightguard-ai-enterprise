@@ -1,0 +1,14 @@
+{
+  "task": "cancellation",
+  "model": "logistic",
+  "experiment": "reconstructed_training",
+  "sampling": "random_without_replacement",
+  "random_state": 42,
+  "train_rows": 300000,
+  "validation_rows": 695115,
+  "train_positive_rate": 0.015883333333333333,
+  "validation_positive_rate": 0.005659495191443142,
+  "roc_auc": 0.7233283031041348,
+  "pr_auc": 0.026086811314711245,
+  "original_training_sample_selection": "unknown"
+}

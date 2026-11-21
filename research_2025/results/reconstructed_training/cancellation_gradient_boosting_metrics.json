@@ -1,0 +1,14 @@
+{
+  "task": "cancellation",
+  "model": "gradient_boosting",
+  "experiment": "reconstructed_training",
+  "sampling": "random_without_replacement",
+  "random_state": 42,
+  "train_rows": 300000,
+  "validation_rows": 695115,
+  "train_positive_rate": 0.015883333333333333,
+  "validation_positive_rate": 0.005659495191443142,
+  "roc_auc": 0.7672261175437036,
+  "pr_auc": 0.0404412217976763,
+  "original_training_sample_selection": "unknown"
+}

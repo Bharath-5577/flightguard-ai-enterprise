@@ -1,0 +1,14 @@
+{
+  "task": "delay",
+  "model": "gradient_boosting",
+  "experiment": "reconstructed_training",
+  "sampling": "random_without_replacement",
+  "random_state": 42,
+  "train_rows": 300000,
+  "validation_rows": 689823,
+  "train_positive_rate": 0.23525333333333334,
+  "validation_positive_rate": 0.19449047074394446,
+  "roc_auc": 0.6864531718219291,
+  "pr_auc": 0.3448587683220687,
+  "original_training_sample_selection": "unknown"
+}
